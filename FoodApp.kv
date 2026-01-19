@@ -1,0 +1,700 @@
+WindowManager:
+    Menu:
+    Catalog:
+    SettingsScreen:
+    NotificationsScreen:
+    FoodInputScreen:
+    EditScreen:
+    ThemeSelect:
+
+# Main menu layout containing the app name and logo, as well as leading buttons to other screens
+<Menu>
+    id: menu
+    name: "menu"
+    MDRelativeLayout:
+
+        # Application Name and logo
+        MDBoxLayout:
+            size_hint: 0.95, 0.20
+            pos_hint: {"center_x": 0.5, "y": 0.7}
+            FoodIcon:
+                size_hint: 0.8, 1
+                pos_hint: {"center_x": 0.5, "center_y": 0.5}
+            MDLabel:
+                size_hint: 1, 1
+                text: "FoodWatch"
+                color: app.theme_cls.primary_dark
+                halign: "left"
+                font_size: "30dp"
+                pos_hint: {"center_x": 0.5, "center_y": 0.5}
+
+        # Lays out buttons in a horizontal belt, allowing for swiping between different buttons
+        MDSwiper:
+            id: menu_swiper
+            on_swipe: root.update_swiper_label()
+
+            # Catalog button
+            MDSwiperItem:
+                MDFlatButton:
+                    text: "Catalog"
+                    font_size: "25dp"
+                    pos_hint: {"center_x": 0.5, "center_y": 0.5}
+                    md_bg_color: app.theme_cls.primary_light
+                    theme_text_color: "Custom"
+                    text_color: "white"
+                    size_hint: 0.8, 0.3
+                    opposite_colors: True
+                    on_release:
+                        app.root.current = "catalog"
+                        root.manager.transition.direction = "left"
+                        app.selection_sort(0)
+
+            # Notifications button
+            MDSwiperItem:
+                MDFlatButton:
+                    text: "Notifications"
+                    font_size: "17dp"
+                    pos_hint: {"center_x": 0.5, "center_y": 0.5}
+                    md_bg_color: app.theme_cls.primary_color
+                    theme_text_color: "Custom"
+                    text_color: "white"
+                    size_hint: 0.8, 0.3
+                    on_release:
+                        app.root.current = "notifications"
+                        root.manager.transition.direction = "left"
+
+            # Settings button
+            MDSwiperItem:
+                MDFlatButton:
+                    text: "Settings"
+                    font_size: "22dp"
+                    pos_hint: {"center_x": 0.5, "center_y": 0.5}
+                    md_bg_color: app.theme_cls.primary_dark
+                    theme_text_color: "Custom"
+                    text_color: "white"
+                    size_hint: 0.8, 0.3
+                    on_release:
+                        app.root.current = "theme_select"
+                        root.manager.transition.direction = "left"
+
+        # Dynamic text displayed underneath the swiper, changes depending on the button in focus
+        MDLabel:
+            id: swiper_label
+            pos_hint: {"center_x": 0.5, "y": 0.2}
+            size_hint: 0.75, 0.1
+            halign: "center"
+            valign: "middle"
+            text: "Welcome to our FoodTracker App. Start by clicking 'Catalog' to add food items"
+            font_style: "Caption"
+            theme_text_color: "Custom"
+            text_color: app.theme_cls.primary_color
+
+        # Displays the current date and time, changes every second
+        DynamicTime:
+            text_color: app.theme_cls.primary_color
+            font_size: "15dp"
+            theme_text_color: "Custom"
+            text_color: app.theme_cls.primary_color
+            height: "30dp"
+            pos_hint: {"center_x": 0.5, "center_y": 0.15}
+            halign: "center"
+
+        # Light/Dark mode toggle button
+        MDIconButton:
+            icon: "weather-sunny"
+            adaptive_size: True
+            type: "small"
+            pos_hint: {"right": 0.95, "center_y": 0.07}
+            theme_icon_color: "Custom"
+            icon_color: app.theme_cls.primary_color
+            on_release:
+                root.on_mode_button_release(self)
+                app.change_mode()
+
+        # Theme selector button
+        MDIconButton:
+            icon: "palette"
+            adaptive_size: True
+            type: "small"
+            pos_hint: {"right": 0.8, "center_y": 0.07}
+            theme_icon_color: "Custom"
+            icon_color: app.theme_cls.primary_color
+            on_release:
+                app.root.current = "theme_select"
+                root.manager.transition.direction = "left"
+
+        # Closing app button
+        MDIconButton:
+            icon: "power"
+            adaptive_size: True
+            type: "small"
+            pos_hint: {"x": 0.05, "center_y": 0.07}
+            theme_icon_color: "Custom"
+            icon_color: app.theme_cls.primary_color
+            on_release:
+                root.on_power_button_release()
+
+# Food Icon image configuration
+<FoodIcon@MDRelativeLayout>:
+    Image:
+        source: "FoodIcon.png"
+        allow_stretch: False
+        image_size: 100,100
+
+<Catalog>:
+    id: catalog
+    name: "catalog"
+
+    MDRelativeLayout:
+
+        MDBoxLayout:
+            orientation: "vertical"
+
+            MDTopAppBar:
+                title: "Catalog"
+                elevation: "4dp"
+                left_action_items: [["arrow-left", lambda x: root.manager.return_to("menu")]]
+                right_action_items: [["home", lambda x: root.manager.return_to("menu")]]
+
+
+            MDTabs:
+
+                # Displays the items in a table layout
+                Tab:
+                    title: "        Table      "
+                    MDBoxLayout:
+                        orientation: "vertical"
+
+                        # Displays the three columns: name, category, and expiration date
+                        CategoryColumns:
+                            size_hint: 1, None
+                            height: self.minimum_height
+
+                        # Displays the food list in a scrollable layout (vertical)
+                        MDScrollView:
+                            FoodList:
+                                id: food_list
+                                size_hint: 1, None
+                                height: self.minimum_height
+
+                        MDRelativeLayout:
+                            size_hint: 1, 0.175
+                            height: "5dp"
+                            MDIconButton:
+                                spacing: "20dp"
+                                theme_icon_color: "Custom"
+                                text_color: "white"
+                                icon: "plus"
+                                md_bg_color: app.theme_cls.primary_color
+                                pos_hint: {"center_x": 0.5, "center_y": 0.5}
+                                on_release:
+                                    app.root.current = "input_screen"
+                                    root.manager.transition.direction = "left"
+
+                            EditToggleButton:
+                                id: edit_button
+                                group: "tool"
+                                size: "40dp", "40dp"
+                                text: "Edit"
+                                text_color: app.theme_cls.primary_color
+                                line_color: app.theme_cls.primary_color
+                                spacing: "20dp"
+                                icon: "tooltip-edit"
+                                icon_color: app.theme_cls.primary_color
+                                on_state: self.on_toggle_button(self)
+                                pos_hint: {"center_x": 0.2, "center_y": 0.5}
+
+                            DeleteToggleButton:
+                                id: delete_button
+                                group: "tool"
+                                size: "40dp", "40dp"
+                                text: "Del"
+                                text_color: app.theme_cls.primary_color
+                                line_color: app.theme_cls.primary_color
+                                spacing: "20dp"
+                                icon: "delete"
+                                icon_color: app.theme_cls.primary_color
+                                on_state: self.on_toggle_button(self)
+                                pos_hint: {"center_x": 0.8, "center_y": 0.5}
+
+                # Displays the items in a calendar format
+                Tab:
+                    title: "    Calendar    "
+                    MDRelativeLayout:
+                        size_hint: 1, 1
+                        MDBoxLayout:
+
+                            # Display the dynamic time next to the calendar widget
+                            DynamicTime:
+                                text_color: app.theme_cls.primary_color
+                                height: "30dp"
+                                pos_hint: {"center_x": 0.5, "top": 1}
+                                halign: "center"
+
+                            # Calendar widget which opens a date picker once released
+                            MDIconButton:
+                                icon: "calendar"
+                                adaptive_size: True
+                                size_hint: 0.5, 1
+                                pos_hint: {"center_x": 0.5, "center_y": 0.5}
+                                theme_icon_color: "Custom"
+                                icon_color: app.theme_cls.primary_color
+                                on_release:
+                                    app.show_date_picker()
+
+# Possible future development
+<CategoryInputTab>:
+    id: "category_input"
+    orientation: 'vertical'
+
+<NotificationsScreen>:
+    id: notifications
+    name: "notifications"
+    MDRelativeLayout:
+
+        MDBoxLayout:
+            orientation: "vertical"
+
+            MDTopAppBar:
+                title: "Notifications"
+                elevation: "4dp"
+                left_action_items: [["arrow-left", lambda x: root.manager.return_to("menu")]]
+                right_action_items: [["home", lambda x: root.manager.return_to("menu")]]
+
+            MDRelativeLayout:
+                size_hint: 1, 1
+
+                MDBoxLayout:
+                    orientation: "vertical"
+                    size_hint: 0.6, 1
+                    pos_hint: {"top": 1, "center_x": 0.5}
+                    MDBoxLayout:
+                        MDLabel:
+                            text: "Enable Notifications"
+
+                        MDSwitch:
+                            pos_hint: {'center_x': .5, 'center_y': .5}
+                            active: True
+                            size_hint: 0.25, None
+                            width: "64dp"
+                            on_active:
+                                app.notif_enabled = True if self.active else False
+
+                    MDLabel:
+                        theme_text_color: "Custom"
+                        text_color: app.theme_cls.primary_color
+                        text: str("Days Trigger: " + str(int(notif_slider.value)))
+                        size_hint: 1, 0.5
+                        font_size: "20sp"
+                        halign: "center"
+
+                    MDSlider:
+                        id: notif_slider
+                        size_hint: 1.5, None
+                        hint: False
+                        height: "10dp"
+                        pos_hint: {"center_x": 0.5, "center_y": 0.5}
+                        text_elevation: 0
+                        min: 1
+                        max: 30.1
+                        value: app.notif_limit
+                        on_value:
+                            app.notif_limit = int(self.value)
+                            print(app.notif_limit)
+
+                    MDRelativeLayout:
+                        MDRectangleFlatButton:
+                            size: root.width, root.height
+                            text: "Send Notifications"
+                            text_color: "#ffffff"
+                            md_bg_color: app.theme_cls.primary_color
+                            size_hint: 0.5, 0.1
+                            pos_hint: {"center_x": 0.5, "center_y":0.5}
+                            on_release: app.notify() if app.notif_enabled else None
+
+
+<SettingsScreen>:
+    id: settings
+    name: "settings"
+    MDRelativeLayout:
+
+        MDBoxLayout:
+            orientation: "vertical"
+
+            MDTopAppBar:
+                title: "Settings"
+                elevation: "4dp"
+                left_action_items: [["arrow-left", lambda x: root.manager.return_to("menu")]]
+                right_action_items: [["home", lambda x: root.manager.return_to("menu")]]
+
+            MDTabs:
+
+                # Displays the items in a table layout
+                Tab:
+                    title: "        Table      "
+                    MDBoxLayout:
+                        orientation: "vertical"
+
+                        # Displays the three columns: name, category, and expiration date
+                        CategoryColumns:
+                            size_hint: 1, None
+                            height: self.minimum_height
+
+                        # Displays the food list in a scrollable layout (vertical)
+                        MDScrollView:
+                            FoodList:
+                                id: food_list
+                                size_hint: 1, None
+                                height: self.minimum_height
+
+                        MDRelativeLayout:
+                            size_hint: 1, 0.175
+                            height: "5dp"
+                            MDIconButton:
+                                spacing: "20dp"
+                                theme_icon_color: "Custom"
+                                text_color: "white"
+                                icon: "plus"
+                                md_bg_color: app.theme_cls.primary_color
+                                pos_hint: {"center_x": 0.5, "center_y": 0.5}
+                                on_release:
+                                    app.root.current = "input_screen"
+                                    root.manager.transition.direction = "left"
+
+                            EditToggleButton:
+                                id: edit_button
+                                group: "tool"
+                                size: "40dp", "40dp"
+                                text: "Edit"
+                                text_color: app.theme_cls.primary_color
+                                line_color: app.theme_cls.primary_color
+                                spacing: "20dp"
+                                icon: "tooltip-edit"
+                                icon_color: app.theme_cls.primary_color
+                                on_state: self.on_toggle_button(self)
+                                pos_hint: {"center_x": 0.2, "center_y": 0.5}
+
+                            DeleteToggleButton:
+                                id: delete_button
+                                group: "tool"
+                                size: "40dp", "40dp"
+                                text: "Del"
+                                text_color: app.theme_cls.primary_color
+                                line_color: app.theme_cls.primary_color
+                                spacing: "20dp"
+                                icon: "delete"
+                                icon_color: app.theme_cls.primary_color
+                                on_state: self.on_toggle_button(self)
+                                pos_hint: {"center_x": 0.8, "center_y": 0.5}
+
+                # Displays the items in a calendar format
+                Tab:
+                    title: "    Calendar    "
+                    MDRelativeLayout:
+                        size_hint: 1, 1
+                        MDBoxLayout:
+
+                            # Display the dynamic time next to the calendar widget
+                            DynamicTime:
+                                text_color: app.theme_cls.primary_color
+                                height: "30dp"
+                                pos_hint: {"center_x": 0.5, "top": 1}
+                                halign: "center"
+
+                            # Calendar widget which opens a date picker once released
+                            MDIconButton:
+                                icon: "calendar"
+                                adaptive_size: True
+                                size_hint: 0.5, 1
+                                pos_hint: {"center_x": 0.5, "center_y": 0.5}
+                                theme_icon_color: "Custom"
+                                icon_color: app.theme_cls.primary_color
+                                on_release:
+                                    app.show_date_picker()
+
+<CategoryColumns>:
+    orientation: "horizontal"
+    MDRectangleFlatButton:
+        text: "Name"
+        text_color: app.theme_cls.primary_color
+        line_color: app.theme_cls.primary_color
+        size_hint: 1, None
+        pos_hint: {"top": 1}
+        height: "30dp"
+        on_release: app.selection_sort(0)
+
+    MDRectangleFlatButton:
+        text: "Category"
+        text_color: app.theme_cls.primary_color
+        line_color: app.theme_cls.primary_color
+        size_hint: 1, None
+        pos_hint: {"top": 1}
+        height: "30dp"
+        on_release: app.selection_sort(1)
+
+    MDRectangleFlatButton:
+        text: "Expiry Date"
+        text_color: app.theme_cls.primary_color
+        line_color: app.theme_cls.primary_color
+        size_hint: 1, None
+        pos_hint: {"top": 1}
+        height: "30dp"
+        on_release: app.selection_sort(2)
+
+
+<FoodList>:
+    orientation: "vertical"
+
+
+# Screen where the user inputs their food name, category, expiration date, and quantity
+<FoodInputScreen>:
+    name: "input_screen"
+    MDRelativeLayout:
+
+        MDBoxLayout:
+            orientation: "vertical"
+
+            MDTopAppBar:
+                title: "Add Item"
+                pos_hint: {"top": 1}
+                size_hint: 1, None
+                elevation: "4dp"
+                left_action_items: [["arrow-left", lambda x: root.manager.return_to("catalog")]]
+                right_action_items: [["home", lambda x: root.manager.return_to("menu")]]
+
+            MDBoxLayout:
+                orientation: "vertical"
+
+                MDLabel:
+                    theme_text_color: "Custom"
+                    text_color: app.theme_cls.primary_color
+                    text: "Item Details"
+                    size_hint: 1, 0.5
+                    font_size: "20sp"
+                    halign: "center"
+
+                MDTextField:
+                    id: name_field
+                    hint_text: "Enter Food Name"
+                    text: "Item"
+                    helper_text: "Max 12 characters"
+                    # helper_text_mode: "on_error"
+                    required: True
+                    max_text_length: 12
+                    icon_right: "food-apple"
+                    icon_right_color: app.theme_cls.primary_color
+                    size_hint: 0.7, None
+                    height: "25dp"
+                    pos_hint: {"center_x": 0.5, "center_y": 0.5}
+                    padding: "10dp", "10dp", "10dp", "30dp"
+
+                MDTextField:
+                    id: category_field
+                    hint_text: "Enter Category Name"
+                    text: "Category"
+                    helper_text: "Max 12 characters"
+                    # helper_text_mode: "on_error"
+                    required: True
+                    max_text_length: 12
+                    icon_right: "food"
+                    icon_right_color: app.theme_cls.primary_color
+                    size_hint: 0.7, None
+                    height: "25dp"
+                    pos_hint: {"center_x": 0.5, "center_y": 0.5}
+                    padding: "10dp", "10dp", "10dp", "30dp"
+
+                MDBoxLayout:
+                    orientation: "horizontal"
+                    size_hint: 0.7, None
+                    height: "60dp"
+                    pos_hint: {"center_x": 0.5, "center_y": 0.5}
+
+                    MDTextField:
+                        id: expiry_date_field
+                        hint_text: "Expiry Date"
+                        text: app.get_current_date()
+                        helper_text: "Invalid Date (mm/dd/yyyy)"
+                        helper_text_mode: "on_error"
+                        validator: "date"
+                        date_format: "mm/dd/yyyy"
+                        required: True
+                        size_hint: 0.7, None
+                        height: "25dp"
+                        pos_hint: {"center_x": 0.5, "center_y": 0.5}
+                        padding: "10dp", "10dp", "10dp", "30dp"
+
+                    MDIconButton:
+                        icon: "calendar"
+                        icon_color: app.theme_cls.primary_color
+                        adaptive_size: True
+                        icon_size: "55sp"
+                        size_hint: 0.5, 1
+                        pos_hint: {"center_x": 0.5, "center_y": 0.5}
+                        theme_icon_color: "Custom"
+                        icon_color: app.theme_cls.primary_color
+                        on_release:
+                            app.show_date_picker()
+
+                MDBoxLayout:
+                    orientation: "horizontal"
+                    size_hint: 0.7, None
+                    height: "60dp"
+                    pos_hint: {"center_x": 0.5, "center_y": 0.5}
+                    MDTextField:
+                        id: quantity_field
+                        hint_text: "Qty"
+                        text: str(int(quantity_slider.value))
+                        helper_text: "Integer Required"
+                        helper_text_mode: "on_error"
+                        required: True
+                        #icon_right: "numeric"
+                        #icon_right_color: app.theme_cls.primary_color
+                        size_hint: 0.3, None
+                        height: "10dp"
+                        pos_hint: {"x": 0, "center_y": 0.5}
+                        padding: "10dp", "10dp", "10dp", "30dp"
+
+                    MDSlider:
+                        id: quantity_slider
+                        size_hint: 1.1, None
+                        hint: False
+                        height: "10dp"
+                        pos_hint: {"center_y": 0.5}
+                        text_elevation: 0
+                        min: 1
+                        max: 10.1
+                        value: 1
+
+                MDRelativeLayout:
+                    MDRectangleFlatButton:
+                        size: root.width, root.height
+                        text: "Add"
+                        text_color: "#ffffff"
+                        md_bg_color: app.theme_cls.primary_color
+                        size_hint: 0.5, 0.1
+                        pos_hint: {"center_x": 0.5, "center_y":0.5}
+                        on_release:
+                            root.add_item(self, name_field.text, category_field.text, expiry_date_field.text, quantity_field.text)
+
+
+# Screen where the user can edit their items. Very similar to the FoodInputScreen.
+<EditScreen>:
+    name: "edit_screen"
+    MDRelativeLayout:
+
+        MDBoxLayout:
+            orientation: "vertical"
+
+            MDBoxLayout:
+                orientation: "vertical"
+
+                MDLabel:
+                    theme_text_color: "Custom"
+                    text_color: app.theme_cls.primary_color
+                    text: "Edit Item Details"
+                    size_hint: 1, 0.5
+                    font_size: "20sp"
+                    halign: "center"
+
+                MDTextField:
+                    id: name_field
+                    hint_text: "Enter Food Name"
+                    text: "Item"
+                    helper_text: "Max 12 characters"
+                    # helper_text_mode: "on_error"
+                    required: True
+                    max_text_length: 12
+                    icon_right: "food-apple"
+                    icon_right_color: app.theme_cls.primary_color
+                    size_hint: 0.7, None
+                    height: "25dp"
+                    pos_hint: {"center_x": 0.5, "center_y": 0.5}
+                    padding: "10dp", "10dp", "10dp", "30dp"
+
+                MDTextField:
+                    id: category_field
+                    hint_text: "Enter Category Name"
+                    text: "Category"
+                    helper_text: "Max 12 characters"
+                    # helper_text_mode: "on_error"
+                    required: True
+                    max_text_length: 12
+                    icon_right: "food"
+                    icon_right_color: app.theme_cls.primary_color
+                    size_hint: 0.7, None
+                    height: "25dp"
+                    pos_hint: {"center_x": 0.5, "center_y": 0.5}
+                    padding: "10dp", "10dp", "10dp", "30dp"
+
+                MDBoxLayout:
+                    orientation: "horizontal"
+                    size_hint: 0.7, None
+                    height: "60dp"
+                    pos_hint: {"center_x": 0.5, "center_y": 0.5}
+
+                    MDTextField:
+                        id: expiry_date_field
+                        hint_text: "Expiry Date"
+                        text: app.get_current_date()
+                        helper_text: "Invalid Date (mm/dd/yyyy)"
+                        helper_text_mode: "on_error"
+                        validator: "date"
+                        date_format: "mm/dd/yyyy"
+                        required: True
+                        size_hint: 0.7, None
+                        height: "25dp"
+                        pos_hint: {"center_x": 0.5, "center_y": 0.5}
+                        padding: "10dp", "10dp", "10dp", "30dp"
+
+                    MDIconButton:
+                        icon: "calendar"
+                        icon_color: app.theme_cls.primary_color
+                        adaptive_size: True
+                        icon_size: "55sp"
+                        size_hint: 0.5, 1
+                        pos_hint: {"center_x": 0.5, "center_y": 0.5}
+                        theme_icon_color: "Custom"
+                        icon_color: app.theme_cls.primary_color
+                        on_release:
+                            app.show_date_picker()
+
+                MDRelativeLayout:
+                    MDRectangleFlatButton:
+                        size: root.width, root.height
+                        text: "Save"
+                        text_color: "#ffffff"
+                        md_bg_color: app.theme_cls.primary_color
+                        size_hint: 0.5, 0.1
+                        pos_hint: {"center_x": 0.5, "center_y":0.5}
+                        on_release:
+                            app.root.get_screen("edit_screen").del_and_edit()
+                            app.root.get_screen("input_screen").add_item(self, name_field.text, category_field.text, expiry_date_field.text, str(1))
+
+                    MDRectangleFlatButton:
+                        size: root.width, root.height
+                        text: "Cancel"
+                        text_color: app.theme_cls.primary_color
+                        line_color: app.theme_cls.primary_color
+                        size_hint: 0.5, 0.1
+                        pos_hint: {"center_x": 0.5, "center_y":0.3}
+                        on_release: root.manager.return_to("catalog")
+
+
+# Screen from where the user can select their app colour palette
+<ThemeSelect>:
+    name: "theme_select"
+
+    MDBoxLayout:
+        orientation: "vertical"
+
+        MDTopAppBar:
+            title: "Choose Theme"
+            pos_hint: {"top": 1}
+            size_hint: 1, None
+            elevation: "4dp"
+            left_action_items: [["arrow-left", lambda x: root.manager.return_to("menu")]]
+
+        MDScrollView:
+            Themes:
+                size_hint: 1, None
+                height: self.minimum_height

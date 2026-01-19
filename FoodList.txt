@@ -1,0 +1,8 @@
+Apple,Produce,04/26/2023
+Apple,Produce,04/26/2023
+Bread,Grain,3/29/2023
+Cake,Dessert,02/18/2023
+Chicken,Protein,03/20/2023
+Coke,Drinks,03/25/2023
+Ice Cream,Dessert,03/04/2023
+Milk,Dairy,03/15/2023

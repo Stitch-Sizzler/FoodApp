@@ -1,0 +1,43 @@
+System Documentation
+
+Requirements:
+- Python 3
+- Kivy, KivyMD
+- Datetime, Plyer
+- Android device (for mobile)
+- Linux distribution software (for mobile)
+
+Files:
+- main.py
+- FoodApp.kv
+- FoodList.txt
+- SettingsFile.txt
+- FoodIcon.png
+- User Documentation (.txt)
+- System Documentation (.txt)
+
+Classes:
+Kivy and KivyMD applications require specific classes to be created for each 
+widget, layout, screen, screen manager, tab, and the app itself. All corresponding
+functionality of those classes are located within its methods (general functionality
+is done through methods in the App class. All Kivy and KivyMD classes inherit 
+attributes from the kivy library.
+
+Notifications:
+Plyer is used to send notifications through Windows OS. There is no scheduling. This
+can be added through Task Scheduler. Timeout can be adjusted to set delays between 
+multiple incoming notifications.
+
+Datetime:
+Used throughout the program to get the current date, perform comparisons between dates,
+and change date format from one form to another.
+
+KV Language:
+KV language is used in the kv file as a more efficient way to create layouts. It is
+not supported with automatic error checking, making debugging difficult. Class rules
+are written under the root <class> structure.
+- Note that all screens must be stated under the ScreenManager
+
+Sources:
+- Programming guide. (n.d.). Kivy 2.1.0 documentation. https://kivy.org/doc/stable/guide-index.html
+- KivyMD 1.1.1 documentation. (n.d.). KivyMD 1.1.1 documentation. https://kivymd.readthedocs.io/en/1.1.1/

@@ -1,0 +1,39 @@
+User Documentation
+
+Overview:
+This application allows the user to keep track of their food items and expiration dates.
+Notifications are sent to alert the user if their item is about to expire.
+
+Run Application:
+- Android: 
+	1.Create buildozer spec file using buildozer on Linux of Google Collab
+	2.Run command !buildozer -v android debug to install APK package
+	2.Connect Android phone to PC using USB-C cable
+	3.Allow computer access to phone files
+	4.Copy APK package to a file in the phone
+	5.On phone, open APK package in MyFiles
+	6.Allow installation
+- Desktop:
+	1.Install Kivy and KivyMD libraries from PyCharm terminal
+	2.Click play button to run application
+
+Adding Food Item:
+Open the Catalog screen and click the add button to input item details.
+Follow the prompts on screen to input correct values into text fields.
+
+Deleting Food Item:
+Open the Catalog screen and click the del button. Then click on any item row.
+A confirmation popup will appear. Click Delete and the item will be removed.
+
+Editing Food Item:
+Open the Catalog screen and click the edit button. Then click on any item row.
+An editing screen will be displayed allowing you to change the properties of your item.
+Click Save to edit your item. Clikc Cancel to leave.
+
+Saving Food List:
+Upon exiting the program, click the power button at the bottom left of the menu screen.
+
+Debugging:
+Check FoodList.txt to ensure data is loaded. If not, copy paste the following:
+	Item,Category,01/01/2020
+This should help start the program again.
