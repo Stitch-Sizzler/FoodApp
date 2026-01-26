@@ -1,5 +1,26 @@
-This is a food tracker app that keeps track of the expiration dates, quantities, and categories of various food items around your house. 
+# Food Tracker App
 
-This specific implementation is for desktop use (Windows 10 or higher) but the program and GUI is designed for an Android built.
+A Kivy-based application for tracking food inventory, expiration dates, and categories. 
 
-Libraries such as Kivy, KivyMD, and plyer may need to be installed separately.
+## Overview
+This project manages household food supplies using a mobile-first UI. While designed for Android deployment, the current implementation is compatible with Windows 10 or higher.
+
+## Key Features
+* Track expiration dates and quantities.
+* Categorize food items.
+* Cross-platform GUI built with Kivy and KivyMD.
+
+## Prerequisites
+The following Python libraries are required:
+* `kivy`
+* `kivymd`
+* `plyer`
+
+## Setup
+1. Install dependencies:
+   `pip install kivy kivymd plyer`
+2. Run the application:
+   `python main.py`
+
+## Documentation
+Detailed technical and operational guides can be found in `System Documentation.txt` and `User Documentation.txt`.
